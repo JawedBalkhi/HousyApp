@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { Line,defaults} from "react-chartjs-2";
 import axios from 'axios';
+import {Grid,Cell} from 'react-mdl';
+defaults.global.defaultFontColor='Black';
 
 const Dankmemes = () => {
   const [chartData, setChartData] = useState({});
+
 
 
   const chart = () => {
@@ -21,11 +24,21 @@ const Dankmemes = () => {
           labels: empAge,
           datasets: [
             {
-              label: "level of thiccness",
-              data: empSal,
+              label: "Van een Gemeente",
+              data: [50,60,20,50,60,20,50,60,20,50,60,20,50,60,20,50,60,20,50,60,20,50,60,20],
               backgroundColor: ["rgba(75, 192, 192, 0.6)"],
-              borderWidth: 4
-            }
+              borderColor : "black",
+           
+              borderWidht :2
+            },{
+                label: "Naar een Gemeente",
+                backgroundColor: "rgba(0,255,0,0.75)",
+                borderColor : "black",
+                borderWidht :2,
+                fontColor: '#black',
+                data: empAge,
+
+                }
           ]
         });
       })
@@ -40,13 +53,26 @@ const Dankmemes = () => {
   }, []);
   return (
     <div className="App">
-      <h1>Dankmemes</h1>
+
+
+        
+<Grid className="verhuis-Grid">
+            <Cell col ={8}>
+
+    
+           
+            
+            
+
+           
+
+      <h1>Verhuizstrommen</h1>
       <div>
         <Line
           data={chartData}
           options={{
             responsive: true,
-            title: { text: "THICCNESS SCALE", display: true },
+            title: { text: "Test", display: true },
             scales: {
               yAxes: [
                 {
@@ -70,8 +96,75 @@ const Dankmemes = () => {
             }
           }}
         />
+        
       </div>
-    </div>
+      </Cell>
+      
+      <Cell col ={4}>
+            <div className ='verhuis-tekst'>
+
+                <h1>Infor over diagram</h1>
+
+                <h2>
+
+                Hier komt uitlet over diagram wat hier af te lezen is
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is  
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is  
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is     Hier komt uitlet over diagram wat hier af te lezen is
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is  
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is     Hier komt uitlet over diagram wat hier af te lezen is
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is  
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is     Hier komt uitlet over diagram wat hier af te lezen is
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is  
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+                Hier komt uitlet over diagram wat hier af te lezen is 
+               
+
+
+                </h2>
+
+
+            </div>
+            </Cell>
+      </Grid>
+   </div>
+    
   );
 };
 

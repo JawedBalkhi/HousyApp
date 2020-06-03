@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
-import {Line} from 'react-chartjs-2';
-import {Grid,Cell} from 'react-mdl'
+import {Line,defaults } from 'react-chartjs-2';
+import {Grid,Cell} from 'react-mdl';
+defaults.global.defaultFontColor='Black';
 
 class Verhuis extends Component{
    
@@ -8,19 +9,19 @@ class Verhuis extends Component{
             super(props);
 
 
-
+            let data = [50,5,1,10,32,2]
 
             this.state ={
                 data:{
-                    labels:["Januarie","Februarie","Maart","Aprile","Mei"],
+                    labels:["Januarie","Februarie","Maart","Aprile","Mei","june"],
                     datasets:[
                         {label: "Van een gemeente",
                         backgroundColor :"rgba(255,0,B,0.75)",
-                        data: [4,5,1,10,32,2,12]
+                        data: data
                      },{
                      label: "Naar een Gemeente",
                      backgroundColor: "rgba(0,255,0,0.75)",
-                       data : [20,1,21,0,12,4,12]
+                       data : [20,1,21,0,12,4]
 
                      }
                     ]
@@ -44,11 +45,13 @@ class Verhuis extends Component{
                   set.backgroundColor = this.setGradientColor(canvas, colors[i]);
                   set.borderColor = "black";
                   set.borderWidht = 2;
+                  set.fontColor = "black"; 
+                  set.fontColor= 'red';
                 });
             }
             return data;
         }
-
+        
 
         render(){
         return(
