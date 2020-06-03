@@ -1,0 +1,103 @@
+
+.header-color{
+  background: #4e54c8;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #8f94fb, #4e54c8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
+}
+
+/* landing page  */
+
+.landing-image{
+  height: 200px;
+  padding: 1em ;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 50%;
+
+}
+
+.landing-text{
+  background-color: rgba(46, 77, 53, 0.37);
+
+  margin: auto;
+  border-radius: 10px;
+
+}
+
+
+
+.landing-text h1{
+  font-size: 18px;
+  font-weight: bold;
+  color: rgb(5, 5, 5);
+  text-align: center;
+  padding: 1em ;
+
+  
+}
+.landing-text h2{
+  font-size: 24px;
+  font-weight: bold;
+  color: aliceblue;
+  text-align: center;
+  color: rgb(0, 0, 0);
+}
+.landing-text hr{
+  border-top: 5px dotted white;
+  width: 50%;
+  margin: auto;
+
+}
+
+/* Verhuisstrom  */
+.verhuis-Grid{
+  background-color: rgba(60, 48, 166, 0.422);
+  grid-template-columns: 70% 30%;
+}
+.verhuis-diagram{
+
+  background-color: rgba(18, 139, 46, 0.37);
+
+  margin: auto;
+  border-radius: 10px;
+  height: auto;
+  width: auto;
+  position :"relative"
+}
+
+.verhuis-Grid h1{
+  font-size: 18px;
+  font-weight: bold;
+  color: rgb(5, 5, 5);
+  text-align: center;
+  padding: 1em ;
+}
+
+.diagran{
+  padding: 1em ;
+}
+
+.verhuis-tekst h1{
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(5, 5, 5);
+  text-align: center;
+  padding: 1em ;
+}
+
+.verhuis-tekst h2{
+ 
+  text-align: center;
+  padding: 1em ;
+  font-size: 18px;
+  line-height: normal
+}
+.verhuis-tekst{
+
+  background-color: rgba(18, 139, 46, 0.37);
+
+  margin: auto;
+  border-radius: 10px;
+}
