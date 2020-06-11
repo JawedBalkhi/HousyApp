@@ -3,7 +3,6 @@ import {Grid,Cell} from 'react-mdl';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import axios from 'axios';
-import data from '../data.json'
 
 
 class Verhuis extends Component {
@@ -12,7 +11,7 @@ class Verhuis extends Component {
        this.state={
         items:[],
         value: "",
-        isLoaded: true,
+        isLoaded: false,
      
        }
        this.onCitySelect = this.onCitySelect.bind(this)
@@ -70,6 +69,7 @@ class Verhuis extends Component {
   
      
      const name = items.map(item => (  item.name ))
+     const Email = items.map(item => (  item.email ))
   
         if (!isLoaded){
             return <div>Loading.......</div>
@@ -79,8 +79,7 @@ class Verhuis extends Component {
             <Grid className="verhuis-Grid">
             <Cell col ={8}>
             <div>
-            <Dropdown options={name} onChange={e => { this.onCitySelect(e); this.setState({ value: e.value})}} setState={this.value} placeholder="Select an option" />;                
-            
+            <Dropdown options={Email} onChange={e => { this.onCitySelect(e); this.setState({ value: e.value})}} setState={this.value} placeholder="Select an option" />;                
             {this.state.value}
             </div>
             <div>

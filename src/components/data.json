@@ -1,18 +1,25 @@
-{"data":[
+[
     {
           "rank": 1,
-          "name":"Name one",
+          "name":"Rijswijk",
           "agency":"agency one"
     },
     {
           "rank": 2,
-          "name":"Name Two",
+          "name":"Rotterdam",
           "agency":"agency two"
     },
     {
           "rank": 3,
-          "name":"Name Three",
+          "name":"Den Haag",
           "agency":"agency three"
+    },
+
+    {
+      "rank": 3,
+      "name":"Delft",
+      "agency":"agency three"
+
     }
-  ]
-  }
+]
+  
