@@ -19,47 +19,47 @@ class Verhuis extends Component {
 
    }
 
-   componentWillMount() {
-    axios.get('../public/users.json') // JSON File Path
-      .then( response => {
-        this.setState({
-        userList: response.data
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-   }
+  //  componentWillMount() {
+  //   axios.get('../public/users.json') // JSON File Path
+  //     .then( response => {
+  //       this.setState({
+  //       userList: response.data
+  //     });
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
+  //  }
   
       
-        // componentDidMount() {
-        //  fetch( "https://jsonplaceholder.typicode.com/users")
-        //     .then(res => res.json())
-        //     .then(json =>{
-        //         this.setState({
-        //             isLoaded:true,
-        //             items:json,
-        //         })
-        //     });
-          
-        // }
         componentDidMount() {
-            fetch("src/data.json")
-            .then(function(data) {
-              console.log(data);
-              
+         fetch( "https://jsonplaceholder.typicode.com/users")
+            .then(res => res.json())
+            .then(json =>{
+                this.setState({
+                    isLoaded:true,
+                    items:json,
+                })
             });
+          
         }
+        // componentDidMount() {
+        //     fetch("src/data.json")
+        //     .then(function(data) {
+        //       console.log(data);
+              
+        //     });
+        // }
         onCitySelect(e){
 
-          // // fetch( "https://jsonplaceholder.typicode.com/users" + value)
-          // .then(res => res.json())
-          // .then(json =>{
-          //     this.setState({
-          //         isLoaded:true,
-          //         items:json,
-          //     })
-          // });
+          fetch( "https://jsonplaceholder.typicode.com/users" )
+          .then(res => res.json())
+          .then(json =>{
+              this.setState({
+                  isLoaded:true,
+                  items:json,
+              })
+          });
         
 
         }
