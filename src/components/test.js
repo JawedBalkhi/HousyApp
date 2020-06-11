@@ -15,16 +15,17 @@ class Test extends Component {
         locatie: "",
         jaar:"",
         isLoaded: true,
-
+        jawed:''
+      
+     
      
        }
-       this.onCitySelect = this.onCitySelect.bind(this)
        
    }
 
    
       
-   componentDidMount(e) {
+   componentDidMount() {
     axios.get("data.json") // JSON File Path
    .then( response => {
      this.setState({
@@ -34,28 +35,28 @@ class Test extends Component {
  })
 
   };
+  onCitySelect(e,locatie){
 
-  onCitySelect(e){
+    axios.get("dataRijswijk.json") // JSON File Path
+    .then( response => {
+      this.setState({
+      jawed: response.data,
+      isLoaded:true,
+        })
+    });
+  
 
-    axios.get("data"+"locatie"+".json") // JSON File Path
-   .then( response => {
-     this.setState({
-     items: response.data,
-     isLoaded:true,
-   });
- })
-
-  };
+  }
 
  
    
     render() {
 
-     const {isLoaded,items,jaar} = this.state;
+     const {isLoaded,items} = this.state;
   
      
      const name = items.map(item => (  item.name ))
-     const jaren =["2017","2020","2022"]
+     const jaren =[2017,2020,2022]
   
         if (!isLoaded){
             return <div>Loading.......</div>
@@ -79,16 +80,15 @@ class Test extends Component {
                  <Cell col ={4}>
             <div>
        
-            <Dropdown options={jaren} onChange={e => this.setState({  jaar: e.value})} setState={this.jaar} placeholder="Select an werlke jaar" />;           
-
+            <Dropdown options={jaren} onChange={e => this.setState({  jaar: e.value})} setState={this.jaar} placeholder="Select an option" />;           
+         <h1>{jaren}</h1>
             {this.state.jaar}
             </div>
-            <div>
+           
                
-         
-         </div>
+         </Cell>
         
-                 </Cell>
+
                  </Grid>
          )
         }
