@@ -95,31 +95,20 @@ class Verhuis extends Component {
       
      
         onCitySelect(){          
-            console.log("run")
+          console.log("run")
           fetch( "http://localhost:3000/"+this.state.value+this.state.value2)
           .then(res => res.json())
           .then(json =>{
              console.log(json)
               this.setState({
-                  
                   isLoaded:true,
                   items2:json,
                   data: { in: json[0].in   ,  out: json[0].out}
-
-
               })
-
-              
-
-              
-             
           });
-        
-
         }
    
     render() {
-
      const {isLoaded,items,items2,value,value2,value3} = this.state;
   
      
@@ -155,7 +144,7 @@ class Verhuis extends Component {
          <Cell col ={2}>
          <div className= "verhuisstroominfo">
          <button onClick={( )=>this.onCitySelect()}>
-                     Activate Lasers </button>
+                     Get verhuisstroom info </button>
 
                      </div>
                      </Cell>
