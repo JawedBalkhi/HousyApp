@@ -13,10 +13,10 @@ const Dankmemes = () => {
     let empSal = [];
     let empAge = [];
     axios
-      .get("http://dummy.restapiexample.com/api/v1/employees")
+      .get("http://localhost:3000/Rotterdam2015")
       .then(res => {
         console.log(res);
-        for (const dataObj of res.data.data) {
+        for (const dataObj of res.data) {
           empSal.push(parseInt(dataObj.employee_salary));
           empAge.push(parseInt(dataObj.employee_age));
         }
@@ -25,20 +25,12 @@ const Dankmemes = () => {
           datasets: [
             {
               label: "Van een Gemeente",
-              data: [50,60,20,50,60,20,50,60,20,50,60,20,50,60,20,50,60,20,50,60,20,50,60,20],
+              data: empAge,
               backgroundColor: ["rgba(75, 192, 192, 0.6)"],
               borderColor : "black",
            
               borderWidht :2
-            },{
-                label: "Naar een Gemeente",
-                backgroundColor: "rgba(0,255,0,0.75)",
-                borderColor : "black",
-                borderWidht :2,
-                fontColor: '#black',
-                data: empAge,
-
-                }
+            }
           ]
         });
       })
@@ -99,69 +91,7 @@ const Dankmemes = () => {
         
       </div>
       </Cell>
-      
-      <Cell col ={4}>
-            <div className ='verhuis-tekst'>
-
-                <h1>Infor over diagram</h1>
-
-                <h2>
-
-                Hier komt uitlet over diagram wat hier af te lezen is
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is  
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is  
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is     Hier komt uitlet over diagram wat hier af te lezen is
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is  
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is     Hier komt uitlet over diagram wat hier af te lezen is
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is  
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is     Hier komt uitlet over diagram wat hier af te lezen is
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is  
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-                Hier komt uitlet over diagram wat hier af te lezen is 
-               
-
-
-                </h2>
-
-
-            </div>
-            </Cell>
+  
       </Grid>
    </div>
     

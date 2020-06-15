@@ -1,99 +1,56 @@
-import React,{Component} from 'react';
-import {Grid,Cell} from 'react-mdl';
-import Dropdown from 'react-dropdown';
-import 'react-dropdown/style.css';
-import items from './data.json';
-import axios from 'axios';
+import React, {Component}from 'react';
+import {bar,Line,Pie, Bar} from 'react-chartjs-2'
 
-
-
-class Test extends Component {
-   constructor(props){
-       super(props);
-       this.state={
-        items,
-        locatie: "",
-        jaar:"",
-        isLoaded: true,
-        jawed:''
-      
-     
-     
+class test extends Component {
+ constructor(props){
+    super(props);
+    this.state={
+       chartData:{
+         labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
+         datasets:[
+            {
+               label:'Population',
+               data:[
+                 617594,
+                 181045,
+                 153060,
+                 106519,
+                 105162,
+                 95072
+               ],
+               backgroundColor:[
+                 'rgba(255, 99, 132, 0.6)',
+                 'rgba(54, 162, 235, 0.6)',
+                 'rgba(255, 206, 86, 0.6)',
+                 'rgba(75, 192, 192, 0.6)',
+                 'rgba(153, 102, 255, 0.6)',
+                 'rgba(255, 159, 64, 0.6)',
+                 'rgba(255, 99, 132, 0.6)'
+               ]
+            }
+         ]
        }
-       
+    }
+ }
+
+   render(){
+      return(
+         <div className="chart">
+           <Bar
+           data={this.state.chartData}
+           width={600}
+           height={70}
+           options={{
+            
+           }}
+           />
+         </div>
+      )
    }
 
-   
-      
-   componentDidMount() {
-    axios.get("data.json") // JSON File Path
-   .then( response => {
-     this.setState({
-     items: response.data,
-     isLoaded:true,
-   });
- })
 
-  };
-  onCitySelect(e,locatie){
 
-    axios.get("dataRijswijk.json") // JSON File Path
-    .then( response => {
-      this.setState({
-      jawed: response.data,
-      isLoaded:true,
-        })
-    });
-  
-
-  }
-
- 
-   
-    render() {
-
-     const {isLoaded,items} = this.state;
-  
-     
-     const name = items.map(item => (  item.name ))
-     const jaren =[2017,2020,2022]
-  
-        if (!isLoaded){
-            return <div>Loading.......</div>
-        }
-        else {
-         return(
-            <Grid className="verhuis-Grid">
-            <Cell col ={4}>
-            <div>
-       
-            <Dropdown options={name} onChange={e => { this.onCitySelect(e); this.setState({ locatie: e.value})}} setState={this.locatie} placeholder="Select an locatie" />;     
-         <h1>{name}</h1>
-            {this.state.locatie}
-            </div>
-            <div>
-               
-         
-         </div>
-        
-                 </Cell>
-                 <Cell col ={4}>
-            <div>
-       
-            <Dropdown options={jaren} onChange={e => this.setState({  jaar: e.value})} setState={this.jaar} placeholder="Select an option" />;           
-         <h1>{jaren}</h1>
-            {this.state.jaar}
-            </div>
-           
-               
-         </Cell>
-        
-
-                 </Grid>
-         )
-        }
-    }
 }
      
     
-    export default Test;
+    export default test;

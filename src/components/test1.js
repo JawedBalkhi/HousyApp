@@ -18,9 +18,10 @@ class Verhuis extends Component {
         items:[],
         value: "",
         isLoaded: false,
-        items2:[],
+        items2:[20,10,10],
         value2: "",
         value3:[],
+        test:[10,20,20,30],
 
 
 
@@ -28,25 +29,19 @@ class Verhuis extends Component {
        }
        
        this.onCitySelect = this.onCitySelect.bind(this)
+       this.getchartData = this.getchartData.bind(this)
        
 
    }
 
-   getchartData(){
+   getchartData(items2){
     this.setState({
        chartData:{
        labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
        datasets:[
           {
              label:'Population',
-             data:[
-               617594,
-               181045,
-               153060,
-               106519,
-               105162,
-               95072
-             ],
+             data:[10,20,40],
              backgroundColor:[
                'rgba(255, 99, 132, 0.6)',
                'rgba(54, 162, 235, 0.6)',
@@ -62,22 +57,7 @@ class Verhuis extends Component {
     });
 }
 
-  //  componentWillMount() {
-  //   axios.get('../public/users.json') // JSON File Path
-  //     .then( response => {
-  //       this.setState({
-  //       userList: response.data
-  //     });
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //   });
-  //  }
-//   componentDidUpdate(){
 
-//      if ( this.state.value && this.state.value2 )
-//       this.onCitySelect();
-//   }
       
         componentDidMount() {
          fetch( "http://localhost:3000/Location")
@@ -89,7 +69,7 @@ class Verhuis extends Component {
                 })
             });
         
-            
+            this.getchartData();
           
         }
       
@@ -141,7 +121,7 @@ class Verhuis extends Component {
             <div className= "verhuisstroominfo">
             <Dropdown options={name} onChange={e => { this.setState({ value: e.value})}} setState={this.value} value={value ? value: null} placeholder="Select an option" />;                
            
-         {leeftijdin.map(item=>(`in: ${item.in}, uit:"${item.out} `)) }
+         {leeftijdin.map(item=>(` ${item.in},${item.out} `)) }
 
             </div>
          
