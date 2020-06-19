@@ -4,7 +4,9 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import datum from './data.json';
 import img from "../img/gemeente.png";
-import {bar,Line,Pie, Bar} from 'react-chartjs-2'
+import {bar,Line,Pie, Bar} from 'react-chartjs-2';
+import { Button } from 'reactstrap';
+
 
 
 
@@ -27,14 +29,6 @@ class Verhuis extends Component {
 
 
 
-      Data:[
-          59,
-          78,
-          85,
-          73,
-          85,
-          50
-        ]
        }
        
        this.onCitySelect = this.onCitySelect.bind(this)
@@ -42,48 +36,6 @@ class Verhuis extends Component {
        
 
    }
-
-//    getchartData(){
-//     console.log('Data from state', this.state.Data)
-
-//     this.setState({ 
-      // chartData: {
-      //   labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
-      //   datasets:[
-      //     {
-      //       label:'Population',
-      //       data: this.state.Data,
-      //       backgroundColor:[
-      //         'rgba(255, 99, 132, 0.6)',
-      //         'rgba(54, 162, 235, 0.6)',
-      //         'rgba(255, 206, 86, 0.6)',
-      //         'rgba(75, 192, 192, 0.6)',
-      //         'rgba(153, 102, 255, 0.6)',
-      //         'rgba(255, 159, 64, 0.6)',
-      //         'rgba(255, 99, 132, 0.6)'
-      //       ]
-      //     }
-      //   ]
-      // } 
-//     });
-// }
-
-  //  componentWillMount() {
-  //   axios.get('../public/users.json') // JSON File Path
-  //     .then( response => {
-  //       this.setState({
-  //       userList: response.data
-  //     });
-  //   })
-  //   .catch(function (error) {
-  //     console.log(error);
-  //   });
-  //  }
-//   componentDidUpdate(){
-
-//      if ( this.state.value && this.state.value2 )
-//       this.onCitySelect();
-//   }
       
         componentDidMount() {
          fetch( "http://localhost:3000/Location")
@@ -105,23 +57,21 @@ class Verhuis extends Component {
           fetch( "http://localhost:3000/"+this.state.value+this.state.value2)
           .then(res => res.json())
           .then(json =>{
-             console.log('onCitySelect Data: ', json)
-
-            const datasetIn = {
+            const datasetInstroom = {
               data: Object.keys(json.in).map(key => json.in[key]),
               label: 'instroom',
-              backgroundColor: Object.keys(json.in).map(_ => 'rgba(124, 252, 0, 0.6)')
+              backgroundColor: 'rgba(124, 252, 0, 0.6)'
             }
 
-            const datasetOut = {
+            const datasetUitstroom = {
               data: Object.keys(json.out).map(key => json.out[key]),
               label: 'uitstroom',
-              backgroundColor: Object.keys(json.out).map(_ => 'rgba(255, 0, 0, 0.6)')
+              backgroundColor: 'rgba(255, 0, 0, 0.6)'
             }
 
             const chartData = {
               labels: ['18-30', '30-50', '50+'],
-              datasets: [ datasetIn, datasetOut ]
+              datasets: [ datasetInstroom, datasetUitstroom ]
             } 
 
               this.setState({
@@ -166,10 +116,13 @@ class Verhuis extends Component {
      {`${value3.in}, ${value3.out}` }
             </div>
          </Cell>
-         <Cell col ={2}>
+         <Cell col={1}>
          <div className= "verhuisstroominfo">
-         <button onClick={( )=>this.onCitySelect()}>
-                     Get verhuisstroom info </button>
+         <Button
+          className="bg-success" 
+          onClick={( )=>this.onCitySelect()}>
+                     Get Data 
+        </Button>
 
                      </div>
                      </Cell>
