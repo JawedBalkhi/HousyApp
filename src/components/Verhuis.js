@@ -18,49 +18,55 @@ class Verhuis extends Component {
         items:[],
         value: "",
         isLoaded: false,
-        items2:[],
+        cities:[],
         value2: "",
         value3:[],
+        chartData: null,
+        totalIn: null,
+        totalOut: null,
 
 
 
-        chartData:{ }
+      Data:[
+          59,
+          78,
+          85,
+          73,
+          85,
+          50
+        ]
        }
        
        this.onCitySelect = this.onCitySelect.bind(this)
+       //this.getchartData = this.getchartData.bind(this)
        
 
    }
 
-   getchartData(){
-    this.setState({
-       chartData:{
-       labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
-       datasets:[
-          {
-             label:'Population',
-             data:[
-               617594,
-               181045,
-               153060,
-               106519,
-               105162,
-               95072
-             ],
-             backgroundColor:[
-               'rgba(255, 99, 132, 0.6)',
-               'rgba(54, 162, 235, 0.6)',
-               'rgba(255, 206, 86, 0.6)',
-               'rgba(75, 192, 192, 0.6)',
-               'rgba(153, 102, 255, 0.6)',
-               'rgba(255, 159, 64, 0.6)',
-               'rgba(255, 99, 132, 0.6)'
-             ]
-          }
-       ]
-     }   
-    });
-}
+//    getchartData(){
+//     console.log('Data from state', this.state.Data)
+
+//     this.setState({ 
+      // chartData: {
+      //   labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
+      //   datasets:[
+      //     {
+      //       label:'Population',
+      //       data: this.state.Data,
+      //       backgroundColor:[
+      //         'rgba(255, 99, 132, 0.6)',
+      //         'rgba(54, 162, 235, 0.6)',
+      //         'rgba(255, 206, 86, 0.6)',
+      //         'rgba(75, 192, 192, 0.6)',
+      //         'rgba(153, 102, 255, 0.6)',
+      //         'rgba(255, 159, 64, 0.6)',
+      //         'rgba(255, 99, 132, 0.6)'
+      //       ]
+      //     }
+      //   ]
+      // } 
+//     });
+// }
 
   //  componentWillMount() {
   //   axios.get('../public/users.json') // JSON File Path
@@ -82,12 +88,13 @@ class Verhuis extends Component {
         componentDidMount() {
          fetch( "http://localhost:3000/Location")
             .then(res => res.json())
-            .then(json =>{
+            .then(json => {
                 this.setState({
                     isLoaded:true,
-                    items:json,
+                    cities:json,
                 })
             });
+            //this.getchartData()
         
             
           
@@ -95,28 +102,46 @@ class Verhuis extends Component {
       
      
         onCitySelect(){          
-          console.log("run")
           fetch( "http://localhost:3000/"+this.state.value+this.state.value2)
           .then(res => res.json())
           .then(json =>{
-             console.log(json)
+             console.log('onCitySelect Data: ', json)
+
+            const datasetIn = {
+              data: Object.keys(json.in).map(key => json.in[key]),
+              label: 'instroom',
+              backgroundColor: Object.keys(json.in).map(_ => 'rgba(124, 252, 0, 0.6)')
+            }
+
+            const datasetOut = {
+              data: Object.keys(json.out).map(key => json.out[key]),
+              label: 'uitstroom',
+              backgroundColor: Object.keys(json.out).map(_ => 'rgba(255, 0, 0, 0.6)')
+            }
+
+            const chartData = {
+              labels: ['18-30', '30-50', '50+'],
+              datasets: [ datasetIn, datasetOut ]
+            } 
+
               this.setState({
                   isLoaded:true,
                   items2:json,
-                  data: { in: json[0].in   ,  out: json[0].out}
+                  totalIn: json['total-in'],
+                  totalOut: json['total-out'],
+                  chartData
               })
           });
         }
    
     render() {
-     const {isLoaded,items,items2,value,value2,value3} = this.state;
+     const {isLoaded,totalIn,totalOut,cities,items,items2,value,value2,value3} = this.state;
   
      
-     const name = items.map(item => (  item.name ))
-     const bewonersin = items2.map(item => (  item.in ))
-     const bewonersout = items2.map(item => (  item.out ))
-     const data = datum.map(item => (  item.name ))
-     const leeftijdin = items2.map(item => ( { in: item.in, out: item.out } ) )
+     const City = cities.map(item => (  item.name ))
+
+     const Years = datum.map(item => (  item.name ))
+
     
   
         if (!isLoaded){
@@ -128,16 +153,16 @@ class Verhuis extends Component {
             <Grid className="Landing-Grid">
             <Cell col ={5}>
             <div className= "verhuisstroominfo">
-            <Dropdown options={name} onChange={e => { this.setState({ value: e.value})}} setState={this.value} value={value ? value: null} placeholder="Select an option" />;                
+            <Dropdown options={City} onChange={e => { this.setState({ value: e.value})}} setState={this.value} value={value ? value: null} placeholder="Select an option" />;                
            
-         {leeftijdin.map(item=>(`in: ${item.in}, uit:"${item.out} `)) }
+ 
 
             </div>
          
             </Cell>
                  <Cell col ={5}>
             <div  className= "verhuisstroominfo">
-            <Dropdown options={data} onChange={b => { this.setState({ value2: b.value})}} setState={this.value}  value={value2 ? value2: null} placeholder="Select an option" />;                
+            <Dropdown options={Years} onChange={b => { this.setState({ value2: b.value})}} setState={this.value}  value={value2 ? value2: null} placeholder="Select an option" />;                
      {`${value3.in}, ${value3.out}` }
             </div>
          </Cell>
@@ -165,10 +190,10 @@ class Verhuis extends Component {
             <div><h1>Jaar : {value2}</h1></div>
           </li>
           <li>
-            <div><h1>Aantal bewonner Bijgekomen : {bewonersin}</h1></div>
+            <div><h1>Aantal bewonner Bijgekomen : {totalIn}</h1></div>
           </li>
           <li>
-            <div><h1>Aantal bewonner Vertrokken : {bewonersout}</h1></div>
+            <div><h1>Aantal bewonner Vertrokken : {totalOut}</h1></div>
           </li>
         
       </ul>
@@ -180,14 +205,25 @@ class Verhuis extends Component {
            
 
             <div className="verhuisstroominfo">
-           <Bar
-           data={this.state.chartData}
-           width={600}
-           height={70}
-           options={{
-            
-           }}
-           />
+            {this.state.chartData && 
+              <Bar
+                data={this.state.chartData}
+                width={600}
+                height={70}
+                options={{
+                  scales: {
+                    yAxes: [{
+                      display: true,
+                      ticks: {
+                        beginAtZero: true
+                      }
+                    }]
+                  }
+
+                }}
+              />
+            }
+           
          </div>
                  </Cell>
                 </Grid>
@@ -196,6 +232,6 @@ class Verhuis extends Component {
         }
     }
 }
-     
+   //test jordy  
     
     export default Verhuis;
