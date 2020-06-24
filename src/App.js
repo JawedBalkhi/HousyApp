@@ -14,6 +14,7 @@ function App() {
             <Navigation>
             <Link to="/">Home</Link>
                 <Link to="/Verhuis">Verhuisstrommen</Link>
+                <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
                 <Link to="/typewonning">Typewonning</Link>
               
             </Navigation>
@@ -22,6 +23,7 @@ function App() {
             <Navigation>
             <Link to="/">Home</Link>
                 <Link to="/Verhuis">Verhuisstrommen</Link>
+                <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
                 <Link to="/typewonning">Typewonning</Link>
             </Navigation>
         </Drawer>
