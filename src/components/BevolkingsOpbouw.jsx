@@ -38,7 +38,7 @@ const defaultPopulationPyramidOptions = {
         yAxes: [{
             stacked: true,
             ticks: {
-                callback: value => { return value.toString().replace('_',' - ')}
+                callback: value => { return value.includes('100') ? value.toString().replace('_',' - ') + ' +' :value.toString().replace('_',' - ')}
             }
         }],
         xAxes: [{
@@ -113,7 +113,8 @@ export default class BevolkingsOpbouw extends React.Component {
             selectedIndices: [],
             manBurgstaatData: null,
             vrouwBurgstaatData: null,
-            loading: false
+            loading: false,
+            burgStaatLoading: false
         }
 
         this.fetchPopulationData = this.fetchPopulationData.bind(this)
@@ -135,8 +136,10 @@ export default class BevolkingsOpbouw extends React.Component {
     }
 
     fetchBurgerlijkeStaat() {
-        if(true || !this.state.selectedMunicipality || !this.state.selectedYear)
+        if(!this.state.selectedMunicipality || !this.state.selectedYear)
             return
+
+        this.setState({ burgStaatLoading: true })    
 
         if(this.state.selectedIndices.length < 1) {
             fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}`)
@@ -147,6 +150,7 @@ export default class BevolkingsOpbouw extends React.Component {
                     return data
                 })
                 .then(this.updateBurgerlijkeStaat)
+                .catch(_ => this.setState({ burgStaatLoading: false }))
         } else {
             const ageGroups = this.state.selectedIndices.map(index => {
                 const label = this.state.chartData.labels[index]
@@ -159,8 +163,9 @@ export default class BevolkingsOpbouw extends React.Component {
             })
 
             Promise.all(
-                ageGroups.map(ageRange => (fetch(`/burgstaat${this.state.selectedMunicipality}/${this.state.selectedYear}?minAge=${ageRange.min}&maxAge=${ageRange.max}`)
-                                            .then(res => res.json())))
+                ageGroups.map(ageRange => (fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}?minAge=${ageRange.min}&maxAge=${ageRange.max}`)
+                                            .then(res => res.json())
+                                            .then(json => json.data)))
             ).then(ageGroupResults =>{
                 const data = ageGroupResults.reduce((acc, ageGroup ) => {
                     const newAcc = { ...acc }
@@ -179,6 +184,7 @@ export default class BevolkingsOpbouw extends React.Component {
                 return data
             })
             .then(this.updateBurgerlijkeStaat)
+            .catch(_ => this.setState({ burgStaatLoading: false }))
         } 
     }
 
@@ -195,7 +201,7 @@ export default class BevolkingsOpbouw extends React.Component {
             data: defaultBurgstaatData.labels.map(key => data[key].v)
         }]
 
-        this.setState({ manBurgstaatData, vrouwBurgstaatData })
+        this.setState({ manBurgstaatData, vrouwBurgstaatData, burgStaatLoading: false })
     }
 
     fetchPopulationData(req) {
@@ -342,10 +348,9 @@ export default class BevolkingsOpbouw extends React.Component {
                 </Row>
             }
 
-            {this.state.loading && <Row> Laden... </Row>}
 
             {!this.state.loading && this.state.chartData && this.state.chartData.datasets[0].data.length > 1 && 
-                <Row className="mb-2">
+                <Row className="mb-2" >
                     <Col>
                         <HorizontalBar 
                             data={this.state.chartData}
@@ -358,9 +363,14 @@ export default class BevolkingsOpbouw extends React.Component {
                     
                 </Row>
             }
-            {!this.state.loading && this.state.manBurgstaatData && this.state.vrouwBurgstaatData && <hr className="mt-3" />}
+
+            {(this.state.loading || this.state.burgStaatLoading) && <Row> Laden... </Row>}
+
+
+            {!this.state.burgStaatLoading && !this.state.loading && this.state.manBurgstaatData && this.state.vrouwBurgstaatData && <hr className="mt-3" />}
+
             {!this.state.loading && this.state.manBurgstaatData && this.state.vrouwBurgstaatData &&
-                <Row className="mt-2">
+                <Row className="mt-2" style={{opacity: this.state.burgStaatLoading ? 0.3 : 1}}>
                     <Col className="text-center border-right">
                         <h4>Burgerlijkestaat vrouwen</h4>
                         <Doughnut data={this.state.vrouwBurgstaatData} />
