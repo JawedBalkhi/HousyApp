@@ -3,7 +3,6 @@ import React from 'react'
 import Select from 'react-select'
 import { Container, Col, Row, Alert } from 'reactstrap'
 import { HorizontalBar, Doughnut } from 'react-chartjs-2'
-import { isGenericTypeAnnotation } from '@babel/types'
 
 const defaultPopulationData = {
     labels: [],
@@ -77,6 +76,27 @@ const unselectedManColor = 'rgba(112, 174, 224, 1)'
 const selectedVrouwColor = 'rgba(255, 20, 147, 1)'
 const unselectedVrouwColor = 'rgba(248, 185, 212 , 1)'
 
+const sortLabels = (a,b) => {
+    if(a === '100')
+        return -1
+    
+    if(b === '100')
+        return 1
+
+    const left = parseInt(a.split('_')[0])
+    const right = parseInt(b.split('_')[0])
+
+    if(left < right)
+        return 1
+    
+    if (left > right) 
+        return -1
+
+    return 0
+}
+
+const allowedMunicipalities = [ 'zuidhorn', 'briltil', 'groningen', 'lauwerzeil', 'niekerk', 'kommerzijl', 'aduard'].sort()
+
 export default class BevolkingsOpbouw extends React.Component {
     constructor(props) {
         super(props)
@@ -84,7 +104,7 @@ export default class BevolkingsOpbouw extends React.Component {
         this.state = {
             selectedMunicipality: null,
             selectedYear: null,
-            availableYears: [ 2017, 2018, 2019 ],
+            availableYears: [ 2010, 2011, 2012, 2013, 2014, 2015 ],
             availableMunicipalities: [],
             municipalitiesError: null,
             populationError: null,
@@ -92,7 +112,8 @@ export default class BevolkingsOpbouw extends React.Component {
             populationPyramidOptions: defaultPopulationPyramidOptions,
             selectedIndices: [],
             manBurgstaatData: null,
-            vrouwBurgstaatData: null
+            vrouwBurgstaatData: null,
+            loading: false
         }
 
         this.fetchPopulationData = this.fetchPopulationData.bind(this)
@@ -102,11 +123,11 @@ export default class BevolkingsOpbouw extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3000/Location')
+        fetch('/woonplaatsen')
             .then(res => res.json())
+            .then(json => json.data.woonplaatsen.filter(val => allowedMunicipalities.includes(val)))
             .then(data => {
-                const availableMunicipalities = data.map(municipality => municipality.name)
-                this.setState({ availableMunicipalities, municipalitiesError: null })
+                this.setState({ availableMunicipalities: data, municipalitiesError: null })
             })
             .catch(err => {
                 this.setState({ chartData: defaultPopulationData, municipalitiesError: `Het is momenteel niet mogelijk woonplaatsten op te halen: ${err.message}` })
@@ -114,12 +135,17 @@ export default class BevolkingsOpbouw extends React.Component {
     }
 
     fetchBurgerlijkeStaat() {
-        if(!this.state.selectedMunicipality || !this.state.selectedYear)
+        if(true || !this.state.selectedMunicipality || !this.state.selectedYear)
             return
 
         if(this.state.selectedIndices.length < 1) {
-            fetch(`http://localhost:3000/burgstaat${this.state.selectedMunicipality}${this.state.selectedYear}`)
+            fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}`)
                 .then(res => res.json())
+                .then(json => json.data)
+                .then(data => {
+                    console.log(data)
+                    return data
+                })
                 .then(this.updateBurgerlijkeStaat)
         } else {
             const ageGroups = this.state.selectedIndices.map(index => {
@@ -131,9 +157,9 @@ export default class BevolkingsOpbouw extends React.Component {
                 const ageArray = label.split('_')
                 return { min: ageArray[0].trim(), max: ageArray[1].trim()}
             })
-            //joejoe
+
             Promise.all(
-                ageGroups.map(ageRange => (fetch(`http://localhost:3000/burgstaat${this.state.selectedMunicipality}${this.state.selectedYear}minAge=${ageRange.min}&maxAge=${ageRange.max}`)
+                ageGroups.map(ageRange => (fetch(`/burgstaat${this.state.selectedMunicipality}/${this.state.selectedYear}?minAge=${ageRange.min}&maxAge=${ageRange.max}`)
                                             .then(res => res.json())))
             ).then(ageGroupResults =>{
                 const data = ageGroupResults.reduce((acc, ageGroup ) => {
@@ -178,24 +204,26 @@ export default class BevolkingsOpbouw extends React.Component {
         if(!municipality || !year)
             return
             
-        fetch(`http://localhost:3000/Bevolkingsopbouw${municipality}${year}`)
+        this.setState({ loading: true })
+        fetch(`/opbouw/${municipality}/${year}`)
             .then(res => res.json())
+            .then(json => json.data)
             .then(data => {
                 //Get values
                 const chartData = Object.assign({}, defaultPopulationData)
                 const populationPyramidOptions = Object.assign({}, defaultPopulationPyramidOptions)
-                const labels = Object.keys(data.man).map(key => key)
+                const labels = Object.keys(data.man).map(key => key.replace('-', '_')).sort(sortLabels)
 
                 const manDataset = Object.assign({}, defaultPopulationData.datasets[0])
-                manDataset.data = Object.keys(data.man).map(key => ([0, data.man[key]])).reverse()
+                manDataset.data = Object.keys(data.man).sort(sortLabels).map(key => ([0, data.man[key]]))
 
                 const vrouwDataset = Object.assign({}, defaultPopulationData.datasets[1])
-                vrouwDataset.data = Object.keys(data.vrouw).map(key => ([-data.vrouw[key], 0])).reverse()
+                vrouwDataset.data = Object.keys(data.vrouw).sort(sortLabels).map(key => ([-data.vrouw[key], 0]))
 
-                const extremeXAxisValue = Object.keys(data.vrouw).map(vrouwKey => data.vrouw[vrouwKey]).concat(Object.keys(data.man).map(manKey => data.vrouw[manKey])).reduce((acc, cur) => { return cur > acc ? cur : acc }, 0)
+                const extremeXAxisValue = Object.keys(data.vrouw).sort(sortLabels).map(vrouwKey => data.vrouw[vrouwKey]).concat(Object.keys(data.man).sort(sortLabels).map(manKey => data.vrouw[manKey])).reduce((acc, cur) => { return cur > acc ? cur : acc }, 0)
 
                 //Write to chart
-                chartData.labels = labels.reverse()
+                chartData.labels = labels
                 chartData.datasets = [ manDataset, vrouwDataset ]
 
                 //Set min- and max value
@@ -208,7 +236,8 @@ export default class BevolkingsOpbouw extends React.Component {
                     selectedIndices: [], 
                     populationError: null, 
                     chartData, 
-                    populationPyramidOptions 
+                    populationPyramidOptions,
+                    loading: false 
                 }, this.fetchBurgerlijkeStaat)
             })
             .catch(err => {
@@ -218,7 +247,8 @@ export default class BevolkingsOpbouw extends React.Component {
                     defaultPopulationData, 
                     populationError: `Er is iets fout gegaan bij het ophalen van de bevolkingsdata: ${err.message}`,
                     manBurgstaatData: null,
-                    vrouwBurgstaatData: null
+                    vrouwBurgstaatData: null,
+                    loading: false
                 })
             })
     }
@@ -279,9 +309,13 @@ export default class BevolkingsOpbouw extends React.Component {
                     <Row>
                         <Select 
                             className="w-75"
-                            options={this.state.availableMunicipalities.map(municipality => ( {name: municipality, label: municipality} ))}
+                            options={this.state.availableMunicipalities.map(municipality => {
+                                const label = municipality.charAt(0).toUpperCase() + municipality.slice(1)
+                                return {name: municipality, label } 
+                        
+                            })}
                             onChange={e => { this.setState({ selectedMunicipality: e.name }); this.fetchPopulationData({ municipality: e.name, year: this.state.selectedYear})}}
-                            value={this.state.selectedMunicipality ? {'name': this.state.selectedMunicipality, label: this.state.selectedMunicipality} : null}
+                            value={this.state.selectedMunicipality ? {'name': this.state.selectedMunicipality, label: this.state.selectedMunicipality.charAt(0).toUpperCase() + this.state.selectedMunicipality.slice(1)} : null}
                             placeholder="Selecteer een woonplaats"
                         />
                     </Row>
@@ -308,7 +342,9 @@ export default class BevolkingsOpbouw extends React.Component {
                 </Row>
             }
 
-            {this.state.chartData && this.state.chartData.datasets[0].data.length > 1 && 
+            {this.state.loading && <Row> Laden... </Row>}
+
+            {!this.state.loading && this.state.chartData && this.state.chartData.datasets[0].data.length > 1 && 
                 <Row className="mb-2">
                     <Col>
                         <HorizontalBar 
@@ -322,8 +358,8 @@ export default class BevolkingsOpbouw extends React.Component {
                     
                 </Row>
             }
-            {this.state.manBurgstaatData && this.state.vrouwBurgstaatData && <hr className="mt-3" />}
-            {this.state.manBurgstaatData && this.state.vrouwBurgstaatData &&
+            {!this.state.loading && this.state.manBurgstaatData && this.state.vrouwBurgstaatData && <hr className="mt-3" />}
+            {!this.state.loading && this.state.manBurgstaatData && this.state.vrouwBurgstaatData &&
                 <Row className="mt-2">
                     <Col className="text-center border-right">
                         <h4>Burgerlijkestaat vrouwen</h4>
