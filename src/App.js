@@ -12,21 +12,11 @@ function App() {
     <Layout fixedHeader>
         <Header  className ='header-color' title="Housy" scroll>
             <Navigation>
-            <Link to="/">Home</Link>
-                <Link to="/Verhuis">Verhuisstrommen</Link>
+            <Link to="/">Over Housy</Link>
+                <Link to="/Verhuis">Verhuisstromen</Link>
                 <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
-                <Link to="/typewonning">Typewonning</Link>
-              
             </Navigation>
         </Header>
-        <Drawer title="Housy">
-            <Navigation>
-            <Link to="/">Home</Link>
-                <Link to="/Verhuis">Verhuisstrommen</Link>
-                <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
-                <Link to="/typewonning">Typewonning</Link>
-            </Navigation>
-        </Drawer>
         <Content>
             <div className="page-content" />
             <Main/>

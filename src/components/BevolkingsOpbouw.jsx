@@ -39,7 +39,12 @@ const defaultPopulationPyramidOptions = {
         yAxes: [{
             stacked: true,
             ticks: {
-                callback: value => { return value.toString().replace('_',' - ')}
+                callback: value => { return value.toString().includes('100')
+                    ? 
+                    '100+'
+                    :
+                    value.toString() === '0-4' ? value.toString().replace('-', ' - ') : value.toString().replace('_',' - ')
+                }
             }
         }],
         xAxes: [{
@@ -77,7 +82,7 @@ const unselectedManColor = 'rgba(112, 174, 224, 1)'
 const selectedVrouwColor = 'rgba(255, 20, 147, 1)'
 const unselectedVrouwColor = 'rgba(248, 185, 212 , 1)'
 
-const woonplaatsen = [ 'zuidhorn', 'niekerk', 'groningen' ]
+const woonplaatsen = [ 'zuidhorn', 'niekerk', 'groningen', 'britltil', 'winsum', 'vierhuizen', 'lauwerzijl', 'kommerzijl', 'aduard' ].sort()
 
 export default class BevolkingsOpbouw extends React.Component {
     constructor(props) {
@@ -137,12 +142,12 @@ export default class BevolkingsOpbouw extends React.Component {
                 if(label.includes('+'))
                     return { min: 100, max: 150 }
                 
-                const ageArray = label.split('_')
+                const ageArray = label.includes('_') ? label.split('_') : label.split('-')
                 return { min: ageArray[0].trim(), max: ageArray[1].trim()}
             })
             //joejoe
             Promise.all(
-                ageGroups.map(ageRange => (fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}minAge=${ageRange.min}&maxAge=${ageRange.max}`)
+                ageGroups.map(ageRange => (fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}?minAge=${ageRange.min}&maxAge=${ageRange.max}`)
                                             .then(res => res.json())
                                             .then(json => json.data)))
             ).then(ageGroupResults =>{
@@ -198,18 +203,35 @@ export default class BevolkingsOpbouw extends React.Component {
                 //Get values
                 const chartData = Object.assign({}, defaultPopulationData)
                 const populationPyramidOptions = Object.assign({}, defaultPopulationPyramidOptions)
-                const labels = Object.keys(data.man).map(key => key)
+                const labels = Object.keys(data.man).sort((a, b) => {
+                    if(a === 100)
+                        return -1
+
+                    if(b === 100)
+                        return 1
+
+                    const item1 = parseInt(a.includes('_') ? a.split('_')[0] : a.split('-')[0])
+                    const item2 = parseInt(b.includes('_') ? b.split('_')[0] : b.split('-')[0])
+
+                    if(item1 > item2)
+                        return -1
+
+                    if(item1 < item2)
+                        return 1
+                    
+                    return 0
+                })
 
                 const manDataset = Object.assign({}, defaultPopulationData.datasets[0])
-                manDataset.data = Object.keys(data.man).map(key => ([0, data.man[key]])).reverse()
+                manDataset.data = labels.map(key => ([0, data.man[key]]))
 
                 const vrouwDataset = Object.assign({}, defaultPopulationData.datasets[1])
-                vrouwDataset.data = Object.keys(data.vrouw).map(key => ([-data.vrouw[key], 0])).reverse()
+                vrouwDataset.data = labels.map(key => ([-data.vrouw[key], 0]))
 
-                const extremeXAxisValue = Object.keys(data.vrouw).map(vrouwKey => data.vrouw[vrouwKey]).concat(Object.keys(data.man).map(manKey => data.vrouw[manKey])).reduce((acc, cur) => { return cur > acc ? cur : acc }, 0)
+                const extremeXAxisValue = labels.map(vrouwKey => data.vrouw[vrouwKey]).concat(labels.map(manKey => data.vrouw[manKey])).reduce((acc, cur) => { return cur > acc ? cur : acc }, 0)
 
                 //Write to chart
-                chartData.labels = labels.reverse()
+                chartData.labels = labels
                 chartData.datasets = [ manDataset, vrouwDataset ]
 
                 //Set min- and max value
