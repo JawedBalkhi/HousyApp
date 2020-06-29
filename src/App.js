@@ -4,6 +4,7 @@ import { Layout,Header,Navigation,Drawer,Content } from 'react-mdl';
 import Main from './components/main';
 import {Link} from 'react-router-dom';
 
+
 function App() {
   return (
    
@@ -16,15 +17,20 @@ function App() {
                 <Link to="/Verhuis">Verhuisstrommen</Link>
                 <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
                 <Link to="/typewonning">Typewonning</Link>
+                <Link to="/Test">Test</Link>
+                <Link to="/Test1">Test1</Link>
               
             </Navigation>
         </Header>
+        
         <Drawer title="Housy">
             <Navigation>
             <Link to="/">Home</Link>
                 <Link to="/Verhuis">Verhuisstrommen</Link>
                 <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
                 <Link to="/typewonning">Typewonning</Link>
+                <Link to="/Test">Test</Link>
+                <Link to="/Test1">Test1</Link>
             </Navigation>
         </Drawer>
         <Content>
@@ -38,4 +44,3 @@ function App() {
 }
 
 export default App;
-// test

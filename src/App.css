@@ -74,6 +74,26 @@
   text-align: center;
   padding: 1em ;
 }
+.verhuisstroominfo h1 {
+  font-size: 20px;
+  padding: 0;
+  text-align: left;
+}
+.verhuisstroominfo h2 {
+  font-size: 20px;
+  color: rgba(95, 90, 90, 0.021);
+
+}
+.verhuisstroominfo{
+  background-color: rgba(78, 87, 80, 0.308);
+padding: 20px;
+  margin: auto;
+  border-radius: 10px;
+}
+.img{
+
+  text-align: center;
+}
 
 .diagran{
   padding: 1em ;

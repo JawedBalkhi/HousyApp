@@ -4,9 +4,7 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import datum from './data.json';
 import img from "../img/gemeente.png";
-import {bar,Line,Pie, Bar} from 'react-chartjs-2';
-import { Button } from 'reactstrap';
-
+import {bar,Line,Pie, Bar} from 'react-chartjs-2'
 
 
 
@@ -15,83 +13,100 @@ class Verhuis extends Component {
    constructor(props){
        super(props);
        this.state={
-
      
         items:[],
         value: "",
         isLoaded: false,
-        cities:[],
+        items2:[20,10,10],
         value2: "",
         value3:[],
-        chartData: null,
-        totalIn: null,
-        totalOut: null,
+        test:[10,20,20,30],
 
 
 
+        chartData:{ }
        }
        
        this.onCitySelect = this.onCitySelect.bind(this)
-       //this.getchartData = this.getchartData.bind(this)
+       this.getchartData = this.getchartData.bind(this)
        
 
    }
+
+   getchartData(items2){
+    this.setState({
+       chartData:{
+       labels: ['Boston', 'Worcester', 'Springfield', 'Lowell', 'Cambridge', 'New Bedford'],
+       datasets:[
+          {
+             label:'Population',
+             data:[10,20,40],
+             backgroundColor:[
+               'rgba(255, 99, 132, 0.6)',
+               'rgba(54, 162, 235, 0.6)',
+               'rgba(255, 206, 86, 0.6)',
+               'rgba(75, 192, 192, 0.6)',
+               'rgba(153, 102, 255, 0.6)',
+               'rgba(255, 159, 64, 0.6)',
+               'rgba(255, 99, 132, 0.6)'
+             ]
+          }
+       ]
+     }   
+    });
+}
+
+
       
         componentDidMount() {
          fetch( "http://localhost:3000/Location")
             .then(res => res.json())
-            .then(json => {
+            .then(json =>{
                 this.setState({
                     isLoaded:true,
-                    cities:json,
+                    items:json,
                 })
             });
-            //this.getchartData()
         
-            
+            this.getchartData();
           
         }
       
      
         onCitySelect(){          
+            console.log("run")
           fetch( "http://localhost:3000/"+this.state.value+this.state.value2)
           .then(res => res.json())
           .then(json =>{
-            const datasetInstroom = {
-              data: Object.keys(json.in).map(key => json.in[key]),
-              label: 'instroom',
-              backgroundColor: 'rgba(124, 252, 0, 0.6)'
-            }
-
-            const datasetUitstroom = {
-              data: Object.keys(json.out).map(key => json.out[key]),
-              label: 'uitstroom',
-              backgroundColor: 'rgba(255, 0, 0, 0.6)'
-            }
-
-            const chartData = {
-              labels: ['18-30', '30-50', '50+'],
-              datasets: [ datasetInstroom, datasetUitstroom ]
-            } 
-
+             console.log(json)
               this.setState({
+                  
                   isLoaded:true,
                   items2:json,
-                  totalIn: json['total-in'],
-                  totalOut: json['total-out'],
-                  chartData
+                  data: { in: json[0].in   ,  out: json[0].out}
+
+
               })
+
+              
+
+              
+             
           });
+        
+
         }
    
     render() {
-     const {isLoaded,totalIn,totalOut,cities,items,items2,value,value2,value3} = this.state;
+
+     const {isLoaded,items,items2,value,value2,value3} = this.state;
   
      
-     const City = cities.map(item => (  item.name ))
-
-     const Years = datum.map(item => (  item.name ))
-
+     const name = items.map(item => (  item.name ))
+     const bewonersin = items2.map(item => (  item.in ))
+     const bewonersout = items2.map(item => (  item.out ))
+     const data = datum.map(item => (  item.name ))
+     const leeftijdin = items2.map(item => ( { in: item.in, out: item.out } ) )
     
   
         if (!isLoaded){
@@ -103,26 +118,23 @@ class Verhuis extends Component {
             <Grid className="Landing-Grid">
             <Cell col ={5}>
             <div className= "verhuisstroominfo">
-            <Dropdown options={City} onChange={e => { this.setState({ value: e.value})}} setState={this.value} value={value ? value: null} placeholder="Select an option" />;                
+            <Dropdown options={name} onChange={e => { this.setState({ value: e.value})}} setState={this.value} value={value ? value: null} placeholder="Select an option" />;                
            
- 
+         {leeftijdin.map(item=>(` ${item.in},${item.out} `)) }
 
             </div>
          
             </Cell>
                  <Cell col ={5}>
             <div  className= "verhuisstroominfo">
-            <Dropdown options={Years} onChange={b => { this.setState({ value2: b.value})}} setState={this.value}  value={value2 ? value2: null} placeholder="Select an option" />;                
+            <Dropdown options={data} onChange={b => { this.setState({ value2: b.value})}} setState={this.value}  value={value2 ? value2: null} placeholder="Select an option" />;                
      {`${value3.in}, ${value3.out}` }
             </div>
          </Cell>
-         <Cell col={1}>
+         <Cell col ={2}>
          <div className= "verhuisstroominfo">
-         <Button
-          className="bg-success" 
-          onClick={( )=>this.onCitySelect()}>
-                     Get Data 
-        </Button>
+         <button onClick={( )=>this.onCitySelect()}>
+                     Activate Lasers </button>
 
                      </div>
                      </Cell>
@@ -143,10 +155,10 @@ class Verhuis extends Component {
             <div><h1>Jaar : {value2}</h1></div>
           </li>
           <li>
-            <div><h1>Aantal bewonner Bijgekomen : {totalIn}</h1></div>
+            <div><h1>Aantal bewonner Bijgekomen : {bewonersin}</h1></div>
           </li>
           <li>
-            <div><h1>Aantal bewonner Vertrokken : {totalOut}</h1></div>
+            <div><h1>Aantal bewonner Vertrokken : {bewonersout}</h1></div>
           </li>
         
       </ul>
@@ -158,25 +170,14 @@ class Verhuis extends Component {
            
 
             <div className="verhuisstroominfo">
-            {this.state.chartData && 
-              <Bar
-                data={this.state.chartData}
-                width={600}
-                height={70}
-                options={{
-                  scales: {
-                    yAxes: [{
-                      display: true,
-                      ticks: {
-                        beginAtZero: true
-                      }
-                    }]
-                  }
-
-                }}
-              />
-            }
-           
+           <Bar
+           data={this.state.chartData}
+           width={600}
+           height={70}
+           options={{
+            
+           }}
+           />
          </div>
                  </Cell>
                 </Grid>
@@ -185,6 +186,6 @@ class Verhuis extends Component {
         }
     }
 }
-   //test jordy  
+     
     
     export default Verhuis;
