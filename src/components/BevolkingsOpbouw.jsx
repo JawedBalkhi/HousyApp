@@ -77,6 +77,8 @@ const unselectedManColor = 'rgba(112, 174, 224, 1)'
 const selectedVrouwColor = 'rgba(255, 20, 147, 1)'
 const unselectedVrouwColor = 'rgba(248, 185, 212 , 1)'
 
+const woonplaatsen = [ 'zuidhorn', 'niekerk', 'groningen' ]
+
 export default class BevolkingsOpbouw extends React.Component {
     constructor(props) {
         super(props)
@@ -84,7 +86,7 @@ export default class BevolkingsOpbouw extends React.Component {
         this.state = {
             selectedMunicipality: null,
             selectedYear: null,
-            availableYears: [ 2017, 2018, 2019 ],
+            availableYears: [ 2010, 2011, 2012, 2013, 2014, 2015 ],
             availableMunicipalities: [],
             municipalitiesError: null,
             populationError: null,
@@ -92,7 +94,9 @@ export default class BevolkingsOpbouw extends React.Component {
             populationPyramidOptions: defaultPopulationPyramidOptions,
             selectedIndices: [],
             manBurgstaatData: null,
-            vrouwBurgstaatData: null
+            vrouwBurgstaatData: null,
+            loading: false,
+            burgstaatLoading: false
         }
 
         this.fetchPopulationData = this.fetchPopulationData.bind(this)
@@ -102,10 +106,11 @@ export default class BevolkingsOpbouw extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3000/Location')
+        fetch('/woonplaatsen')
             .then(res => res.json())
+            .then(json => json.data.woonplaatsen)
             .then(data => {
-                const availableMunicipalities = data.map(municipality => municipality.name)
+                const availableMunicipalities = data.filter(woonplaats => woonplaatsen.includes(woonplaats))
                 this.setState({ availableMunicipalities, municipalitiesError: null })
             })
             .catch(err => {
@@ -117,10 +122,14 @@ export default class BevolkingsOpbouw extends React.Component {
         if(!this.state.selectedMunicipality || !this.state.selectedYear)
             return
 
+        this.setState({ burgstaatLoading: true })
+
         if(this.state.selectedIndices.length < 1) {
-            fetch(`http://localhost:3000/burgstaat${this.state.selectedMunicipality}${this.state.selectedYear}`)
+            fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}`)
                 .then(res => res.json())
+                .then(json => json.data)
                 .then(this.updateBurgerlijkeStaat)
+                .catch(_ => this.setState({ burgstaatLoading: false }))
         } else {
             const ageGroups = this.state.selectedIndices.map(index => {
                 const label = this.state.chartData.labels[index]
@@ -133,8 +142,9 @@ export default class BevolkingsOpbouw extends React.Component {
             })
             //joejoe
             Promise.all(
-                ageGroups.map(ageRange => (fetch(`http://localhost:3000/burgstaat${this.state.selectedMunicipality}${this.state.selectedYear}minAge=${ageRange.min}&maxAge=${ageRange.max}`)
-                                            .then(res => res.json())))
+                ageGroups.map(ageRange => (fetch(`/burgstaat/${this.state.selectedMunicipality}/${this.state.selectedYear}minAge=${ageRange.min}&maxAge=${ageRange.max}`)
+                                            .then(res => res.json())
+                                            .then(json => json.data)))
             ).then(ageGroupResults =>{
                 const data = ageGroupResults.reduce((acc, ageGroup ) => {
                     const newAcc = { ...acc }
@@ -153,6 +163,7 @@ export default class BevolkingsOpbouw extends React.Component {
                 return data
             })
             .then(this.updateBurgerlijkeStaat)
+            .catch(_ => this.setState({ burgstaatLoading: false }))
         } 
     }
 
@@ -169,7 +180,7 @@ export default class BevolkingsOpbouw extends React.Component {
             data: defaultBurgstaatData.labels.map(key => data[key].v)
         }]
 
-        this.setState({ manBurgstaatData, vrouwBurgstaatData })
+        this.setState({ manBurgstaatData, vrouwBurgstaatData, burgstaatLoading: false })
     }
 
     fetchPopulationData(req) {
@@ -177,9 +188,12 @@ export default class BevolkingsOpbouw extends React.Component {
 
         if(!municipality || !year)
             return
+
+        this.setState({ loading: true })
             
-        fetch(`http://localhost:3000/Bevolkingsopbouw${municipality}${year}`)
+        fetch(`/opbouw/${municipality}/${year}`)
             .then(res => res.json())
+            .then(json => json.data)
             .then(data => {
                 //Get values
                 const chartData = Object.assign({}, defaultPopulationData)
@@ -208,7 +222,8 @@ export default class BevolkingsOpbouw extends React.Component {
                     selectedIndices: [], 
                     populationError: null, 
                     chartData, 
-                    populationPyramidOptions 
+                    populationPyramidOptions,
+                    loading: false 
                 }, this.fetchBurgerlijkeStaat)
             })
             .catch(err => {
@@ -218,7 +233,8 @@ export default class BevolkingsOpbouw extends React.Component {
                     defaultPopulationData, 
                     populationError: `Er is iets fout gegaan bij het ophalen van de bevolkingsdata: ${err.message}`,
                     manBurgstaatData: null,
-                    vrouwBurgstaatData: null
+                    vrouwBurgstaatData: null,
+                    loading: false
                 })
             })
     }
@@ -322,9 +338,12 @@ export default class BevolkingsOpbouw extends React.Component {
                     
                 </Row>
             }
+
+            {(this.state.loading || this.state.burgstaatLoading) && <Row>Laden...</Row>}
+
             {this.state.manBurgstaatData && this.state.vrouwBurgstaatData && <hr className="mt-3" />}
             {this.state.manBurgstaatData && this.state.vrouwBurgstaatData &&
-                <Row className="mt-2">
+                <Row className="mt-2" style={{opacity: this.state.burgstaatLoading ? 0.3 : 1}}>
                     <Col className="text-center border-right">
                         <h4>Burgerlijkestaat vrouwen</h4>
                         <Doughnut data={this.state.vrouwBurgstaatData} />
