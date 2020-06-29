@@ -2,6 +2,7 @@
   "name": "housy-app",
   "version": "0.1.0",
   "private": true,
+  "proxy":"http://localhost:5000",
   "dependencies": {
     "@progress/kendo-react-dropdowns": "^3.14.0",
     "@progress/kendo-react-intl": "^3.14.0",
@@ -9,8 +10,6 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "axios": "^0.19.2",
-    "axis": "^1.0.0",
     "bootstrap": "^4.5.0",
     "cart.js": "0.0.0",
     "chart.js": "^2.9.3",
@@ -22,9 +21,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "react-select": "^3.1.0",
-    "react-widgets": "^4.5.0",
-    "reactstrap": "^8.4.1",
-    "recharts": "^1.8.5"
+    "reactstrap": "^8.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

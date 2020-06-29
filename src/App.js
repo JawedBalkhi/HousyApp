@@ -15,6 +15,7 @@ function App() {
             <Navigation>
             <Link to="/">Home</Link>
                 <Link to="/Verhuis">Verhuisstrommen</Link>
+                <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
                 <Link to="/typewonning">Typewonning</Link>
                 <Link to="/Test">Test</Link>
                 <Link to="/Test1">Test1</Link>
@@ -26,6 +27,7 @@ function App() {
             <Navigation>
             <Link to="/">Home</Link>
                 <Link to="/Verhuis">Verhuisstrommen</Link>
+                <Link to="/Bevolkingsopbouw">Bevolkingsopbouw</Link>
                 <Link to="/typewonning">Typewonning</Link>
                 <Link to="/Test">Test</Link>
                 <Link to="/Test1">Test1</Link>
@@ -42,4 +44,3 @@ function App() {
 }
 
 export default App;
-//test
